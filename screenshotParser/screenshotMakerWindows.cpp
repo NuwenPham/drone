@@ -36,15 +36,15 @@ BitMap * ScreenshotMakerWindows::capture()
     ScreenData = new byte[4 * ScreenX * ScreenY];
     GetDIBits(hScreen, hBitmap, 0, ScreenY, ScreenData, (BITMAPINFO*) &bmi, DIB_RGB_COLORS);
     
-    std::vector<std::vector<Pixel*>*>* data = new std::vector<std::vector<Pixel*>*>(bmi.biHeight, 0);
+    std::vector<std::vector<Pixel*>*>* data = new std::vector<std::vector<Pixel*>*>(ScreenY, 0);
 
-    for (int y = 0; y < bmi.biHeight; ++y) {
+    for (int y = 0; y < ScreenY; ++y) {
         std::vector<Pixel*>* row = new std::vector<Pixel*>(bmi.biWidth, 0);
         data->at(y) = row;
         for (int x = 0; x < bmi.biWidth ; ++x) {
             uint8_t blue = ScreenData[bmi.biWidth * y + x * 3];
             uint8_t green = ScreenData[bmi.biWidth * y + x * 3 + 1];
-            uint8_t red = ScreenData[bmi.biWidth * y + x * 3 + 2]
+            uint8_t red = ScreenData[bmi.biWidth * y + x * 3 + 2];
 
             row->at(x) = new Pixel(red, green, blue);
         }

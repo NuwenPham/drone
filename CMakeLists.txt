@@ -13,7 +13,7 @@ else()
 endif()
 
 #set(CMakeRoot "D:/others/ccp/drone")
-
+#
 #set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMakeRoot}/lib)
 #set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMakeRoot}/lib)
 #set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMakeRoot}/bin)

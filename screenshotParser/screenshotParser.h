@@ -8,6 +8,7 @@
 #include "base.h"
 #ifdef _WIN32
     #include "screenshotMakerWindows.h"
+    typedef ScreenshotMakerWindows ScreenshotMaker;
 #else
     #include "screenshotMakerUnix.h"
     typedef ScreenshotMakerUnix ScreenshotMaker;

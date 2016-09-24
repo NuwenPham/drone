@@ -1,5 +1,6 @@
 #include "bitmap.h"
 #include <iostream>
+#include <stdio.h>
 
 BitMap::BitMap(const std::string& path):
     data(0),
