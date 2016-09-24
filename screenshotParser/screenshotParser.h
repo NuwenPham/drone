@@ -5,7 +5,14 @@
 #ifndef DRONE_SCREENSHOTPARSER_H
 #define DRONE_SCREENSHOTPARSER_H
 
-#include "../base.h"
+#include "base.h"
+#ifdef _WIN32
+    #include "screenshotMakerWindows.h"
+#else
+    #include "screenshotMakerUnix.h"
+    typedef ScreenshotMakerUnix ScreenshotMaker;
+#endif
+
 
 class ScreenshotParser : public Base
 {
@@ -13,6 +20,9 @@ public:
     ScreenshotParser();
     ~ScreenshotParser();
     void getScreenInfo();
+    
+private:
+    ScreenshotMaker* capturer;
 
 };
 

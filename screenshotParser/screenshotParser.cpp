@@ -3,18 +3,19 @@
 //
 
 #include "screenshotParser.h"
-#include "parsers/blank.h"
-#include "../utils/bmphelper.h"
-#include "screenshotMakerWindows.h"
+//#include "parsers/blank.h"
+#include "utils/bitmap.h"
 
-ScreenshotParser::ScreenshotParser()
+ScreenshotParser::ScreenshotParser():
+    Base(),
+    capturer(new ScreenshotMaker())
 {
 
 }
 
 ScreenshotParser::~ScreenshotParser()
 {
-
+    delete capturer;
 }
 
 /**
@@ -23,12 +24,13 @@ ScreenshotParser::~ScreenshotParser()
 void ScreenshotParser::getScreenInfo()
 {
     // наши данные о скриноште ( ширина, высота и буфер )
-    BMPHelper* screenshot = getScreenShotData();
-
+    BitMap* screenshot = capturer->capture();;
+    BitMap* slice = screenshot->rect(200, 200, 500, 500);
+    slice->save("screenshot.bmp");
     // Тестовый парсер скриншота
     // ---
     // Может быть стоит задуматься над тем, что вначале будет один большой чувак,
     // который как-то определить где находятся виджеты
     // ---
-    Blank* b = new Blank();
+    //Blank* b = new Blank();
 }

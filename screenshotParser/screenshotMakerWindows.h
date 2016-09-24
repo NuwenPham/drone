@@ -5,9 +5,22 @@
 #ifndef DRONE_SCREENSHOTMAKERWINDOWS_H
 #define DRONE_SCREENSHOTMAKERWINDOWS_H
 
+#include "utils/bitmap.h"
+#include "utils/pixel.h"
+#include "vector"
+#include <windows.h>
+#include <utility>
 
-#include "../utils/bmphelper.h"
-
-BMPHelper* getScreenShotData();
+class ScreenshotMakerWindows
+{
+public:
+    ScreenshotMakerWindows();
+    ~ScreenshotMakerWindows();
+    
+    BitMap* capture();
+    
+private:
+    
+};
 
 #endif //DRONE_SCREENSHOTMAKERWINDOWS_H

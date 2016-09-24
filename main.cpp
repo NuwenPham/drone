@@ -1,14 +1,10 @@
 #include <iostream>
-#include <windows.h>
 #include "screenshotParser/screenshotParser.h"
-
-ScreenshotParser* GlobalParser = new ScreenshotParser();
 
 int main()
 {
-
+    ScreenshotParser* GlobalParser = new ScreenshotParser();
     GlobalParser->getScreenInfo();
 
-    Sleep(10000);
     return 0;
 }

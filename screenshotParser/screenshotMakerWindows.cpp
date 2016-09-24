@@ -2,13 +2,18 @@
 // Created by cubla on 18.09.2016.
 //
 
-#include <windows.h>
-#include <utility>
 #include "screenshotMakerWindows.h"
 
+ScreenshotMakerWindows::ScreenshotMakerWindows()
+{
+}
 
+ScreenshotMakerWindows::~ScreenshotMakerWindows()
+{
+}
 
-BMPHelper* getScreenShotData() {
+BitMap * ScreenshotMakerWindows::capture()
+{
     byte* ScreenData = 0;
     HDC hScreen = GetDC(GetDesktopWindow());
     int ScreenX = GetDeviceCaps(hScreen, HORZRES);
@@ -30,6 +35,20 @@ BMPHelper* getScreenShotData() {
     bmi.biSizeImage = 0;
     ScreenData = new byte[4 * ScreenX * ScreenY];
     GetDIBits(hScreen, hBitmap, 0, ScreenY, ScreenData, (BITMAPINFO*) &bmi, DIB_RGB_COLORS);
+    
+    std::vector<std::vector<Pixel*>*>* data = new std::vector<std::vector<Pixel*>*>(bmi.biHeight, 0);
 
-    return new BMPHelper(bmi.biWidth, bmi.biHeight, ScreenData);
+    for (int y = 0; y < bmi.biHeight; ++y) {
+        std::vector<Pixel*>* row = new std::vector<Pixel*>(bmi.biWidth, 0);
+        data->at(y) = row;
+        for (int x = 0; x < bmi.biWidth ; ++x) {
+            uint8_t blue = ScreenData[bmi.biWidth * y + x * 3];
+            uint8_t green = ScreenData[bmi.biWidth * y + x * 3 + 1];
+            uint8_t red = ScreenData[bmi.biWidth * y + x * 3 + 2]
+
+            row->at(x) = new Pixel(red, green, blue);
+        }
+    }
+    
+    BitMap* bm = new BitMap(data);
 }
