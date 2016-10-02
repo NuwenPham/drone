@@ -18,7 +18,9 @@ public:
     void save(const std::string& path) const;
     BitMap* rect(uint32_t startx, uint32_t starty, uint32_t endx, uint32_t endy) const;
     uint32_t realSize() const;
-    
+    Pixel* getPixel(uint32_t x, uint32_t y) const;
+    Pixel* setPixel(uint32_t x, uint32_t y, Pixel* p) const;
+
 private:
     void writeHeader(FILE* file) const;
     
