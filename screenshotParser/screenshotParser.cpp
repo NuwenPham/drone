@@ -59,6 +59,16 @@ void ScreenshotParser::test()
     BitMap* screen = new BitMap("../images/screenshot.bmp");
     BitMap* bmp = new BitMap("../images/widget/corners/leftTop_inactive.bmp");
 
+    std::vector<BitMap*>* templates = new std::vector<BitMap*>();
+    templates->push_back(new BitMap("../images/widget/corners/leftTop_inactive.bmp"));
+    templates->push_back(new BitMap("../images/widget/corners/rightTop_inactive.bmp"));
+    templates->push_back(new BitMap("../images/widget/corners/leftBottom_inactive.bmp"));
+    templates->push_back(new BitMap("../images/widget/corners/rightBottom_inactive.bmp"));
+    templates->push_back(new BitMap("../images/widget/corners/leftTop_active.bmp"));
+    templates->push_back(new BitMap("../images/widget/corners/rightTop_active.bmp"));
+    templates->push_back(new BitMap("../images/widget/corners/leftBottom_active.bmp"));
+    templates->push_back(new BitMap("../images/widget/corners/rightBottom_active.bmp"));
+
     int rw = screen->getWidth(), rh = screen->getHeight();
     BitMap* screenshot = screen->rect(0, 0, rw, rh);
 
@@ -66,7 +76,7 @@ void ScreenshotParser::test()
 
 
     uint32_t mx = 0, my = 0, width = screen->getWidth(), height = screen->getHeight();
-    uint32_t iw = bmp->getWidth(), ih = bmp->getHeight();
+
     std::vector<Pixel*>* row;
 
     while( my < height )
@@ -86,77 +96,102 @@ void ScreenshotParser::test()
     mx = 0;
     my = 0;
 
-    printf("%i:%i\n" , iw, ih);
-
+    BitMap* current;
+    std::cout<< "start" << std::endl;
+    uint32_t iw, ih, amount, count, ix, iy, a;
     // main loop
-    while( my < rh - ih)
+    try
     {
-        mx = 0;
-        while(mx < rw - iw)
+
+
+        while (my < rh)
         {
-            //inner loop
-
-            int amount = 0, count = 0;
-
-            uint32_t ix = 0, iy = 0;
-            while (iy < ih)
+            mx = 0;
+            while (mx < rw)
             {
-                ix = 0;
-                while(ix < iw )
+                //inner loop
+                a = 0;
+                while (a < templates->size())
                 {
-                   // printf("m: %i:%i / i: %i:%i / all: %i:%i\n", my, mx, iy, ix, (iy + my), (ix + mx));
-                    Pixel* searchPixel = bmp->getPixel(ix, iy);
-                    Pixel* sourcePixel = screenshot->getPixel(ix + mx, iy + my);
-                    Pixel* res = subtraction(searchPixel, sourcePixel);//subtraction(subtraction(searchPixel, sourcePixel), new Pixel(255, 255, 255));
-                    //target->at(iy + my)->at(ix + mx) = res;
+                    current = templates->at(a);
 
-                    count++;
-                    amount += (res->red + res->green + res->blue) / 3;
 
-                    //std::cout << iy + my << ":" << ix + mx << " i: " << iy << ":" <<  ix << " m: " << my << ":" << mx << std::endl;
-                    ix++;
-                }
-                iy++;
-            }
-
-            if(amount / count < 10){
-                printf("found: %i\n", count);
-
-                ix = 0;
-                iy = 0;
-                while (iy < ih)
-                {
-                    ix = 0;
-                    while(ix < iw )
+                    iw = current->getWidth();
+                    ih = current->getHeight();
+                    //printf("%i:%i\n" , iw, ih);
+                    if (ih + my >= rh || iw + mx >= rw)
                     {
-                        // printf("m: %i:%i / i: %i:%i / all: %i:%i\n", my, mx, iy, ix, (iy + my), (ix + mx));
-                        Pixel* searchPixel = bmp->getPixel(ix, iy);
-                        Pixel* sourcePixel = screenshot->getPixel(ix + mx, iy + my);
+                        mx++;
+                        a++;
+                        continue;
+                    }
+
+
+                    amount = 0;
+                    count = 0;
+                    ix = 0;
+                    iy = 0;
+                    while (iy < ih)
+                    {
+                        ix = 0;
+                        while (ix < iw)
+                        {
+                            // printf("m: %i:%i / i: %i:%i / all: %i:%i\n", my, mx, iy, ix, (iy + my), (ix + mx));
+                            Pixel* res = subtraction(current->getPixel(ix, iy), screenshot->getPixel(ix + mx, iy + my));
+                            //subtraction(subtraction(searchPixel, sourcePixel), new Pixel(255, 255, 255));
+                            //target->at(iy + my)->at(ix + mx) = res;
+
+                            count++;
+                            amount += (res->red + res->green + res->blue) / 3;
+                            delete res;
+                            //std::cout << iy + my << ":" << ix + mx << " i: " << iy << ":" <<  ix << " m: " << my << ":" << mx << std::endl;
+                            ix++;
+                        }
+                        iy++;
+                    }
+
+                    if (amount / count < 10)
+                    {
+                        printf("(%i) found: %i\n", a, count);
+
+                        ix = 0;
+                        iy = 0;
+                        while (iy < ih)
+                        {
+                            ix = 0;
+                            while (ix < iw)
+                            {
+                                // printf("m: %i:%i / i: %i:%i / all: %i:%i\n", my, mx, iy, ix, (iy + my), (ix + mx));
 //                        Pixel* res = /*subtraction(searchPixel, sourcePixel);//*/subtraction(subtraction(searchPixel, sourcePixel), new Pixel(255, 255, 255));
-                        Pixel* res = searchPixel->copy();
-                        target->at(iy + my)->at(ix + mx) = res;
+
+                                target->at(iy + my)->at(ix + mx) = current->getPixel(ix, iy)->copy();
 
 //                        count++;
 //                        amount += (res->red + res->green + res->blue) / 3;
 
-                        //std::cout << iy + my << ":" << ix + mx << " i: " << iy << ":" <<  ix << " m: " << my << ":" << mx << std::endl;
-                        ix++;
+                                //std::cout << iy + my << ":" << ix + mx << " i: " << iy << ":" <<  ix << " m: " << my << ":" << mx << std::endl;
+                                ix++;
+                            }
+                            iy++;
+                        }
+
                     }
-                    iy++;
+                    a++;
                 }
 
+                // main loop
+                mx++;
             }
 
-
-            // main loop
-            mx++;
+            my++;
         }
-
-        my++;
+    }catch(int i) {
+        printf("m: %i:%i / i: %i:%i / all: %i:%i\n", my, mx, iy, ix, (iy + my), (ix + mx));
+        Sleep(100000);
     }
 
     BitMap* bm = new BitMap(target);
     bm->save("compare.bmp");
-
-    int b = 0;
+    std::cout<< "end" << std::endl;
 }
+
