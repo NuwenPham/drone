@@ -67,6 +67,11 @@ uint32_t BitMap::getHeight() const
     return height;
 }
 
+Pixel* BitMap::getPixel(uint32_t x, uint32_t y) const
+{
+    return this->data->at(y)->at(x);
+}
+
 void BitMap::save(const std::string& path) const
 {
     FILE* file = fopen(path.data(), "wb");

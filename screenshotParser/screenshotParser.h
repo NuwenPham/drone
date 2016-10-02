@@ -29,6 +29,7 @@ private:
     ScreenshotMaker* capturer;
     EdgesDetector* parser;
     FrameConstructor* frameConstructor;
+    void test();
 
 };
 

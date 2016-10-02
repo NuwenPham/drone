@@ -21,6 +21,9 @@ public:
     uint8_t* getData() const;
     const Pixel& at(uint32_t x, uint32_t y) const;
     
+    Pixel* getPixel(uint32_t x, uint32_t y) const;
+    //Pixel* setPixel(uint32_t x, uint32_t y, Pixel* p) const;
+    
 private:
     static void writeIntToArray(uint8_t value, uint8_t* array, uint32_t startIndex);
     static void writeIntToArray(uint16_t value, uint8_t* array, uint32_t startIndex);
