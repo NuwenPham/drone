@@ -9,6 +9,8 @@ public:
     Pixel(uint8_t r, uint8_t g, uint8_t b);
     
     Pixel* copy() const;
+    bool operator==(const Pixel& other) const;
+    bool operator!=(const Pixel& other) const;
 
 public:
     uint8_t red;

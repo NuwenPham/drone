@@ -21,6 +21,7 @@ endif()
 include_directories(${CMAKE_SOURCE_DIR})
 add_subdirectory(utils)
 add_subdirectory(screenshotParser)
+configure_file(1.bmp 1.bmp COPYONLY)
 
 set(SOURCE_FILES
     main.cpp

@@ -6,6 +6,9 @@
 #define DRONE_SCREENSHOTPARSER_H
 
 #include "base.h"
+#include "imageParsers/edgesdetector.h"
+#include "imageParsers/frameconstructor.h"
+
 #ifdef _WIN32
     #include "screenshotMakerWindows.h"
     typedef ScreenshotMakerWindows ScreenshotMaker;
@@ -24,6 +27,8 @@ public:
     
 private:
     ScreenshotMaker* capturer;
+    EdgesDetector* parser;
+    FrameConstructor* frameConstructor;
 
 };
 

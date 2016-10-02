@@ -70,70 +70,101 @@ uint32_t BitMap::getHeight() const
 void BitMap::save(const std::string& path) const
 {
     FILE* file = fopen(path.data(), "wb");
-    writeHeader(file);
+    uint8_t* array = getData();
     
+    fwrite(array, sizeof(uint8_t), realSize() + 54, file);
+    
+    delete[] array;
+    fclose(file);
+}
+
+void BitMap::writeHeader(uint8_t* array) const
+{
+    uint32_t t_size = realSize();
+    
+    uint16_t fileTag = 19778;
+    uint32_t size = t_size + 54;
+    uint16_t rezerved = 0;
+    uint32_t offset = 54;
+    uint32_t headerSize = 40;
+    uint16_t planes = 1;
+    uint16_t bpp = 24;
+    uint32_t comp = 0;
+    uint32_t mapSize = t_size;
+    uint32_t xppm = 0;
+    uint32_t yppm = 0;
+    uint32_t numberOfColors = 0;
+    uint32_t importantColors = 0;
+    
+    writeIntToArray(fileTag, array, 0);
+    writeIntToArray(size, array, 2);
+    writeIntToArray(rezerved, array, 6);
+    writeIntToArray(rezerved, array, 8);
+    writeIntToArray(offset, array, 10);
+    writeIntToArray(headerSize, array, 14);
+    writeIntToArray(width, array, 18);
+    writeIntToArray(height, array, 22);
+    writeIntToArray(planes, array, 26);
+    writeIntToArray(bpp, array, 28);
+    writeIntToArray(comp, array, 30);
+    writeIntToArray(mapSize, array, 34);
+    writeIntToArray(xppm, array, 38);
+    writeIntToArray(yppm, array, 42);
+    writeIntToArray(numberOfColors, array, 46);
+    writeIntToArray(importantColors, array, 50);
+}
+
+uint8_t * BitMap::getData() const
+{
+    uint32_t size = realSize() + 54;
+    uint8_t* array = new uint8_t[size]{};
+    
+    writeHeader(array);
     std::vector<std::vector<Pixel*>*>::const_reverse_iterator vitr = data->rbegin();
     std::vector<std::vector<Pixel*>*>::const_reverse_iterator vend = data->rend();
     
     std::vector<Pixel*>::const_iterator hitr;
     std::vector<Pixel*>::const_iterator hend;
     Pixel* px;
-    uint64_t c = 0;
+    uint32_t x = 0;
+    uint32_t y = 0;
     
-    uint64_t padded = (width * 3 + 3) & (~3);
-    uint8_t* buffer = new uint8_t[padded]{};
+    uint32_t padded = (width * 3 + 3) & (~3);
     for (; vitr != vend; ++vitr) {
         std::vector<Pixel*>* row = *vitr;
         hitr = row->begin();
         hend = row->end();
-        c = 0;
+        x = 0;
         for (; hitr != hend; ++hitr) {
             px = *hitr;
-            buffer[c * 3 + 0] = px->blue;
-            buffer[c * 3 + 1] = px->green;
-            buffer[c * 3 + 2] = px->red;
-            ++c;
+            array[54 + y * padded + x * 3 + 0] = px->blue;
+            array[54 + y * padded + x * 3 + 1] = px->green;
+            array[54 + y * padded + x * 3 + 2] = px->red;
+            ++x;
         }
-        fwrite(buffer, sizeof(uint8_t), padded, file);
+        ++y;
     }
-    delete[] buffer;
     
-    fclose(file);
+    return array;
 }
 
-void BitMap::writeHeader(FILE* file) const
+void BitMap::writeIntToArray(uint8_t value, uint8_t* array, uint32_t startIndex)
 {
-    uint32_t t_size = realSize();
-    uint16_t fileTag[1] = {19778};
-    uint32_t size[1] = {t_size + 54};
-    uint16_t rezerved[2] = {0, 0};
-    uint32_t offset[1] = {54}; //1078???
-    
-    uint32_t headerSize[1] = {40};
-    uint32_t wh[2] {width, height};
-    uint16_t planes[1] = {1};
-    uint16_t bpp[1] = {24};
-    uint32_t comp[1] = {0};
-    uint32_t mapSize[1] = {t_size};
-    uint32_t xppm[1] = {0};
-    uint32_t yppm[1] = {0};
-    uint32_t numberOfColors[1] = {0};
-    uint32_t importantColors[1] = {0};
-    
-    fwrite(fileTag, sizeof(uint16_t), 1, file);
-    fwrite(size, sizeof(uint32_t), 1, file);
-    fwrite(rezerved, sizeof(uint16_t), 2, file);
-    fwrite(offset, sizeof(uint32_t), 1, file);
-    fwrite(headerSize, sizeof(uint32_t), 1, file);
-    fwrite(wh, sizeof(uint32_t), 2, file);
-    fwrite(planes, sizeof(uint16_t), 1, file);
-    fwrite(bpp, sizeof(uint16_t), 1, file);
-    fwrite(comp, sizeof(uint32_t), 1, file);
-    fwrite(mapSize, sizeof(uint32_t), 1, file);
-    fwrite(xppm, sizeof(uint32_t), 1, file);
-    fwrite(yppm, sizeof(uint32_t), 1, file);
-    fwrite(numberOfColors, sizeof(uint32_t), 1, file);
-    fwrite(importantColors, sizeof(uint32_t), 1, file);
+    array[startIndex] = value;
+}
+
+void BitMap::writeIntToArray(uint16_t value, uint8_t* array, uint32_t startIndex)
+{
+    for (int i = 0; i < 2; ++i) {
+        array[startIndex + i] = ((uint8_t*)&value)[i];
+    }
+}
+
+void BitMap::writeIntToArray(uint32_t value, uint8_t* array, uint32_t startIndex)
+{
+    for (int i = 0; i < 4; ++i) {
+        array[startIndex + i] = ((uint8_t*)&value)[i];
+    }
 }
 
 BitMap* BitMap::rect(uint32_t startx, uint32_t starty, uint32_t endx, uint32_t endy) const
@@ -169,4 +200,8 @@ uint32_t BitMap::realSize() const
     return ((width * 3 + 3) & (~3)) * height;
 }
 
+const Pixel & BitMap::at(uint32_t x, uint32_t y) const
+{
+    return *(data->at(y)->at(x));
+}
 

@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 2.6)
 
+add_subdirectory(imageParsers)
+
 set(SOURCE_FILES
     screenshotParser.cpp
 )
@@ -25,6 +27,7 @@ endif(UNIX)
 add_library(screenshotParser STATIC ${SOURCE_FILES} ${HEADER_FILES} ${SSM})
 
 target_link_libraries(screenshotParser utils)
+target_link_libraries(screenshotParser imp)
 
 if(UNIX)
     target_link_libraries(screenshotParser X11)
