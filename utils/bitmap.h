@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "pixel.h"
+#include "line.h"
 
 class BitMap
 {
@@ -23,6 +24,9 @@ public:
     
     Pixel* getPixel(uint32_t x, uint32_t y) const;
     //Pixel* setPixel(uint32_t x, uint32_t y, Pixel* p) const;
+    
+    void draw(const Line& line);
+    void draw(uint32_t x, uint32_t y, const Pixel& color);
     
 private:
     static void writeIntToArray(uint8_t value, uint8_t* array, uint32_t startIndex);

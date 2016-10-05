@@ -36,14 +36,44 @@ void ScreenshotParser::getScreenInfo()
 //     BitMap* slice = screenshot->rect(200, 200, 500, 500);
 //     slice->save("screenshot.bmp");
     
-//     BitMap* screenshot1 = new BitMap("1.bmp");
-//     std::pair<std::list<Line>, std::list<Line>> pair = parser->detect(*screenshot1);
-//     
-//     std::cout << "Horizontal lines count: " << pair.first.size() << std::endl;
-//     std::cout << "Vertical lines count: " << pair.second.size() << std::endl;
-//     
-//     std::list<BitMap*> frames = frameConstructor->construct(*screenshot1, pair);
-    test();
+    BitMap* screenshot1 = new BitMap("1.bmp");
+    std::pair<std::list<Line>, std::list<Line>> pair = parser->detect(*screenshot1);
+    
+    std::cout << "Horizontal lines count: " << pair.first.size() << std::endl;
+    std::cout << "Vertical lines count: " << pair.second.size() << std::endl;
+    
+    std::list<Line>::const_iterator h_beg = pair.first.begin();
+    std::list<Line>::const_iterator h_end = pair.first.end();
+    std::list<Line>::const_iterator v_beg = pair.second.begin();
+    std::list<Line>::const_iterator v_end = pair.second.end();
+    
+    for (; h_beg != h_end; ++h_beg) {
+        Line h = *h_beg;
+        h.setColor(Pixel(255, 255, 255));
+        screenshot1->draw(h);
+    }
+    
+    for (; v_beg != v_end; ++v_beg) {
+        Line v = *v_beg;
+        v.setColor(Pixel(255, 255, 255));
+        screenshot1->draw(v);
+    }
+    
+    screenshot1->save("2.bmp");
+    
+    std::list<BitMap*> frames = frameConstructor->construct(*screenshot1, pair);
+    
+    std::cout << "Frames count: " << frames.size() << std::endl;
+    
+    std::list<BitMap*>::iterator beg = frames.begin();
+    std::list<BitMap*>::iterator end = frames.end();
+    
+    for (; beg != end; ++beg) {
+        delete *beg;
+    }
+    frames.clear();
+    delete screenshot1;
+    //test();
 
     // Тестовый парсер скриншота
     // ---

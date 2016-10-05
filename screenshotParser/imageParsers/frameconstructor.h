@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include <list>
+#include <map>
 
 #include "utils/bitmap.h"
 #include "utils/line.h"

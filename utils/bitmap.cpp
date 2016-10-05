@@ -210,3 +210,21 @@ const Pixel & BitMap::at(uint32_t x, uint32_t y) const
     return *(data->at(y)->at(x));
 }
 
+void BitMap::draw(const Line& line)
+{
+    Line::Orientation orient = line.getOrientation();
+    for (uint32_t i = 0; i < line.getLength(); ++i) {
+        if (orient == Line::Horizontal) {
+            draw(line.getX() + i, line.getY(), line.getColor());
+        } else {
+            draw(line.getX(), line.getY() + i, line.getColor());
+        }
+    }
+}
+
+void BitMap::draw(uint32_t x, uint32_t y, const Pixel& color)
+{
+    Pixel * px = data->at(y)->at(x);
+    data->at(y)->at(x) = color.copy();
+    delete px;
+}
